@@ -1,10 +1,19 @@
-#include <cstdio>
+#include <iostream>
 #include <cstdlib>
+#include "lexical/LexicalAnalysis.h"
 
 int main(int argc, char* argv[]) {
     if(argc != 2) {
-        printf("Usage: %s [Program]\n", argv[0]);
+        std::cout << "Usage: " << argv[0] << "[Program]" << std::endl;
         exit(1);
+    }
+
+    try {
+        LexicalAnalysis l(argv[1]);
+        std::cout << l.nextToken().str() << std::endl;
+
+    } catch (const std::string& error) {
+        std::cerr << error << std::endl;
     }
     return 0;
 }
