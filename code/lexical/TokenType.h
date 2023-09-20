@@ -10,15 +10,17 @@ enum TokenType{
 	 TT_END_OF_FILE    =  0,
 
 	//Symbols
-	 TT_SEMICOLON,	  // ;
+	 TT_SEMICOLON,	   // ;
 	 TT_COMMA,         // ,
-	 TT_PERIOD,		  // .
+	 TT_PERIOD,		   // .
 	 TT_ASSIGN,        // =
 	 TT_POINTS,        // :
 	 TT_PAR1,          // (
 	 TT_PAR2,          // )
      TT_CHAV1,         // {
      TT_CHAV2,         // }
+	 TT_QUOTE1,		   // “
+	 TT_QUOTE2,		   // ”
 
 	//Logic Operators
 	 TT_EQUAL,		  // ==
@@ -47,12 +49,12 @@ enum TokenType{
 	 TT_WRITE,         // write
 	 TT_READ,          // read
 	 TT_DO,			  // do
-
-	//Others
-	 TT_VAR,           // varible
 	 TT_INT,           // int
 	 TT_FLOAT,         // float
 	 TT_STRING,        // string
+
+	//Others
+	 TT_ID,           // varible
 	 TT_CONST,         // const
 	 TT_VARI,          // var
 
@@ -86,7 +88,11 @@ inline std::string tt2str(enum TokenType type){
     case TT_CHAV1:
         return "CHAV1";         
     case TT_CHAV2:
-        return "CHAV2";         
+        return "CHAV2";
+	case TT_QUOTE1:
+		return "QUOTE1";
+	case TT_QUOTE2:
+		return "QUOTE2";          
 
 	//Logic Operators
 	case TT_EQUAL:
@@ -135,16 +141,16 @@ inline std::string tt2str(enum TokenType type){
         return "READ";          
 	case TT_DO:
         return "DO";			  
-
-	//Others
-	case TT_VAR:
-        return "VAR";          
 	case TT_INT:
         return "INT";           
 	case TT_FLOAT: 
         return "FLOAT";        
 	case TT_STRING:
         return "STRING";        
+
+	//Others
+	case TT_ID:
+        return "VAR";          
 	case TT_CONST:
         return "CONST";         
 	case TT_VARI:

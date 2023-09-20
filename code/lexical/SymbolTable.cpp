@@ -9,7 +9,9 @@ SymbolTable::SymbolTable() {
 	m_symbols["("] = TT_PAR1;         
 	m_symbols[")"] = TT_PAR2;        
     m_symbols["{"] = TT_CHAV1;        
-    m_symbols["}"] = TT_CHAV2;        
+    m_symbols["}"] = TT_CHAV2;     
+	m_symbols["“"] = TT_QUOTE1;
+	m_symbols["”"] = TT_QUOTE2;  
 	m_symbols["=="] = TT_EQUAL; 
 	m_symbols["!="] = TT_NOT_EQUAL;  
 	m_symbols["<"] = TT_LOWER;     
@@ -41,5 +43,5 @@ bool SymbolTable::contains(const std::string& token) const {
 
 }
 enum TokenType SymbolTable::find(const std::string& token) {
-    return this->contains(token) ? m_symbols[token] : TT_INVALID_TOKEN;
+    return this->contains(token) ? m_symbols[token] : TT_ID;
 }
