@@ -10,9 +10,9 @@ SymbolTable::SymbolTable() {
 	m_symbols[")"] = TT_PAR2;        
     m_symbols["{"] = TT_CHAV1;        
     m_symbols["}"] = TT_CHAV2;     
-	m_symbols["“"] = TT_QUOTE1;
-	m_symbols["”"] = TT_QUOTE2;  
+	m_symbols["\""] = TT_QUOTE; 
 	m_symbols["=="] = TT_EQUAL; 
+	m_symbols["="] = TT_ASSIGN; 
 	m_symbols["!="] = TT_NOT_EQUAL;  
 	m_symbols["<"] = TT_LOWER;     
 	m_symbols[">"] = TT_GREATER;      
@@ -32,6 +32,10 @@ SymbolTable::SymbolTable() {
     m_symbols["write"] = TT_WRITE;                 
 	m_symbols["read"] = TT_READ;        
 	m_symbols["do"] = TT_DO;
+	m_symbols["int"] = TT_INT;
+	m_symbols["float"] = TT_FLOAT;
+	m_symbols["string"] = TT_STRING;
+
 
 }
 SymbolTable::~SymbolTable(){

@@ -10,6 +10,7 @@ class LexicalAnalysis {
         virtual ~LexicalAnalysis();
 
         Lexeme nextToken();
+        int line() const {return m_line;}
 
     private:
         int m_line;

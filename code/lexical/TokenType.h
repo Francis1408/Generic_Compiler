@@ -19,8 +19,7 @@ enum TokenType{
 	 TT_PAR2,          // )
      TT_CHAV1,         // {
      TT_CHAV2,         // }
-	 TT_QUOTE1,		   // “
-	 TT_QUOTE2,		   // ”
+	 TT_QUOTE,		   // “
 
 	//Logic Operators
 	 TT_EQUAL,		  // ==
@@ -56,7 +55,6 @@ enum TokenType{
 	//Others
 	 TT_ID,           // varible
 	 TT_CONST,         // const
-	 TT_VARI,          // var
 
 };
 
@@ -89,10 +87,8 @@ inline std::string tt2str(enum TokenType type){
         return "CHAV1";         
     case TT_CHAV2:
         return "CHAV2";
-	case TT_QUOTE1:
-		return "QUOTE1";
-	case TT_QUOTE2:
-		return "QUOTE2";          
+	case TT_QUOTE:
+		return "QUOTE";         
 
 	//Logic Operators
 	case TT_EQUAL:
@@ -150,11 +146,9 @@ inline std::string tt2str(enum TokenType type){
 
 	//Others
 	case TT_ID:
-        return "VAR";          
+        return "IDENTIFIER";          
 	case TT_CONST:
         return "CONST";         
-	case TT_VARI:
-        return "VARI"; 
     default:
         throw std::string("invalid token type");         
 

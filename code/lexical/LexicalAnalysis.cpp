@@ -1,6 +1,7 @@
 #include "LexicalAnalysis.h"
 #include <string.h>
 #include <cctype>
+#include <iostream>
 
 LexicalAnalysis::LexicalAnalysis(const char* filename) : m_line(1) {
     m_input = fopen(filename, "r");
@@ -16,12 +17,57 @@ Lexeme LexicalAnalysis::nextToken() {
     Lexeme lex;
 
     state = 1;
+
     while(state != 15 && state != 16) {
         int c = fgetc(m_input);
 
+       // std::cout << "[" << state << ", " << c << " ('" 
+       //           << (char) c << "')]" << std::endl;
         switch (state)
         {
         case 1:
+            if (c == ' ' || c == '\t' || c == '\r') {
+                state = 1;
+            } else if (c == '\n') {
+                m_line++;
+                state = 1;
+            } else if (c == '/') {
+                state = 2;
+            } else if (c == '=' || c == '<' || c == '>' || c == '!') {
+                lex.token += (char) c;
+                state = 3;
+            } else if (c == '+' || c == ',' || c == ';' || c == '(' || c == ')' || 
+                       c == '{' || c == '}' || c == '*' || c == '-' || c == '.') {
+                lex.token += (char) c;
+                state = 15;
+            } else if (c == '&') {
+                lex.token += (char) c;
+                state = 8;
+            } else if (c == '|') {
+                lex.token += (char) c;
+                state = 9;
+            } else if (isalpha(c)) {
+                lex.token += (char) c;
+                state = 7;
+            } else if (isdigit(c) && c != '0') {
+                lex.token += (char) c;
+                state = 10;
+            } else if (c == '0') {
+                lex.token += (char) c;
+                state = 13;
+            } else if (c == '"') {
+                lex.token += (char) c;
+                state = 14;
+            } else {
+                if (c == -1) {
+                    lex.type = TT_END_OF_FILE;
+                    state = 16;
+                } else {
+                    lex.token += (char) c;
+                    lex.type = TT_INVALID_TOKEN;
+                    state = 16;
+                }
+            }
             break;
         case 2:
             if (c == '/') {
@@ -162,7 +208,7 @@ Lexeme LexicalAnalysis::nextToken() {
             }
             break;
         case 14:
-        if(c != '”') {
+        if(c != '"') {
             lex.token += (char) c;
             state = 14;
         } else {
@@ -170,13 +216,13 @@ Lexeme LexicalAnalysis::nextToken() {
             lex.type = TT_CONST;
             state = 16;
         }
-        break;
+            break;
         default:
             throw std::string("invalid state");
         }
         
     }
-    if (state == 15 || state == 16) {
+    if (state == 15) {
         lex.type = m_st.find(lex.token);
     }
 
