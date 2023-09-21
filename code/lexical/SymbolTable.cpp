@@ -1,6 +1,7 @@
 #include <map>
 #include <iostream>
 #include <string.h>
+#include <iomanip>
 #include "SymbolTable.h"
 
 SymbolTable::SymbolTable() {
@@ -61,6 +62,8 @@ enum TokenType SymbolTable::find(const std::string& token) {
 void SymbolTable::showTable() const {
 	
 	for (auto it = m_symbols.begin(); it != m_symbols.end(); it++) {
-		std::cout << it->first << " : " << it->second << std::endl;
+		std::cout << std::setw(7) << it->first; 
+		std::cout << "|";
+		std::cout << std::setw(7) << it->second << std::endl;
 	}
 }

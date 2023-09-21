@@ -1,4 +1,5 @@
 #include "LexicalAnalysis.h"
+#include <iomanip>
 #include <string.h>
 #include <cctype>
 #include <iostream>
@@ -12,6 +13,9 @@ LexicalAnalysis::~LexicalAnalysis() {
         fclose(m_input);
 }
 void LexicalAnalysis::showTable() {
+    std::cout << "---------TABELA DE SÍMBOLOS---------" << std::endl;
+    std::cout << std::setw(15) << "LEXEMA" << 
+    " | " << "TOKEN ID" << std::endl;
     this->m_st.showTable();
 }
 
