@@ -11,6 +11,9 @@ LexicalAnalysis::~LexicalAnalysis() {
     if (m_input != nullptr)
         fclose(m_input);
 }
+void LexicalAnalysis::showTable() {
+    this->m_st.showTable();
+}
 
 Lexeme LexicalAnalysis::nextToken() {
     int state;
@@ -21,8 +24,8 @@ Lexeme LexicalAnalysis::nextToken() {
     while(state != 15 && state != 16) {
         int c = fgetc(m_input);
 
-       // std::cout << "[" << state << ", " << c << " ('" 
-       //           << (char) c << "')]" << std::endl;
+        //std::cout << "[" << state << ", " << c << " ('" 
+        //          << (char) c << "')]" << std::endl;
         switch (state)
         {
         case 1:
@@ -35,7 +38,7 @@ Lexeme LexicalAnalysis::nextToken() {
                 state = 2;
             } else if (c == '=' || c == '<' || c == '>' || c == '!') {
                 lex.token += (char) c;
-                state = 3;
+                state = 6;
             } else if (c == '+' || c == ',' || c == ';' || c == '(' || c == ')' || 
                        c == '{' || c == '}' || c == '*' || c == '-' || c == '.') {
                 lex.token += (char) c;
@@ -95,12 +98,20 @@ Lexeme LexicalAnalysis::nextToken() {
             if (c == '*') {
                 state = 5;
             } else {
-                state = 4;
+                if(c != -1)
+                    state = 4;
+                else {
+                    lex.type = TT_END_OF_FILE;
+                    state = 16;
+                }
+                    
             }
             break;
         case 5:
             if (c == '/') {
                 state = 1;
+            } else if (c == '*') {
+                state = 5;
             } else {
                 state = 4;
             }
@@ -165,7 +176,7 @@ Lexeme LexicalAnalysis::nextToken() {
                 if (c != -1) 
                     ungetc(c, m_input);
 
-                lex.type = TT_CONST;
+                lex.type = TT_INTEGER;
                 state = 16;
             }
             break;
@@ -191,7 +202,7 @@ Lexeme LexicalAnalysis::nextToken() {
                 if (c != -1)
                     ungetc(c, m_input);
 
-                lex.type = TT_CONST;
+                lex.type = TT_REAL;
                 state = 16;
             }
             break;
@@ -203,7 +214,7 @@ Lexeme LexicalAnalysis::nextToken() {
                 if(c != -1)
                     ungetc(c, m_input);
                 
-                lex.type = TT_CONST;
+                lex.type = TT_INTEGER;
                 state = 16;
             }
             break;
@@ -213,7 +224,7 @@ Lexeme LexicalAnalysis::nextToken() {
             state = 14;
         } else {
             lex.token += (char) c;
-            lex.type = TT_CONST;
+            lex.type = TT_LITERAL;
             state = 16;
         }
             break;

@@ -12,6 +12,8 @@ class LexicalAnalysis {
         Lexeme nextToken();
         int line() const {return m_line;}
 
+        void showTable();
+
     private:
         int m_line;
         SymbolTable m_st;

@@ -53,9 +53,10 @@ enum TokenType{
 	 TT_STRING,        // string
 
 	//Others
-	 TT_ID,           // varible
-	 TT_CONST,         // const
-
+	 TT_ID,           // varible       
+	 TT_INTEGER,	  // Integer
+	 TT_REAL,		  // Real number
+	 TT_LITERAL,	  // String
 };
 
 inline std::string tt2str(enum TokenType type){
@@ -76,7 +77,9 @@ inline std::string tt2str(enum TokenType type){
 	case TT_COMMA:
         return "COMMA";        
 	case TT_PERIOD:
-        return "PERIOD";		  
+        return "PERIOD";
+	case TT_ASSIGN:
+		return "ASSIGN";		  
 	case TT_POINTS:
         return "POINTS";        
 	case TT_PAR1:
@@ -147,8 +150,12 @@ inline std::string tt2str(enum TokenType type){
 	//Others
 	case TT_ID:
         return "IDENTIFIER";          
-	case TT_CONST:
-        return "CONST";         
+	case TT_INTEGER:
+        return "INTEGER";
+	case TT_REAL:
+        return "REAL";
+	case TT_LITERAL:
+        return "LITERAL";         
     default:
         throw std::string("invalid token type");         
 

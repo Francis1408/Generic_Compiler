@@ -16,6 +16,7 @@ int main(int argc, char* argv[]) {
             std::cout << lex.str() << std::endl;
         }
         std::cout << lex.str() << std::endl;
+        l.showTable();
 
     } catch (const std::string& error) {
         std::cerr << error << std::endl;

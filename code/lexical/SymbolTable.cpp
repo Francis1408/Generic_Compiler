@@ -1,3 +1,6 @@
+#include <map>
+#include <iostream>
+#include <string.h>
 #include "SymbolTable.h"
 
 SymbolTable::SymbolTable() {
@@ -47,5 +50,17 @@ bool SymbolTable::contains(const std::string& token) const {
 
 }
 enum TokenType SymbolTable::find(const std::string& token) {
-    return this->contains(token) ? m_symbols[token] : TT_ID;
+	if(this->contains(token)) {
+		return m_symbols[token];
+	} else {
+		m_symbols[token] = TT_ID; // Adiciona identificador na tabela de símbolos
+		return TT_ID;
+	}
+}
+
+void SymbolTable::showTable() const {
+	
+	for (auto it = m_symbols.begin(); it != m_symbols.end(); it++) {
+		std::cout << it->first << " : " << it->second << std::endl;
+	}
 }
