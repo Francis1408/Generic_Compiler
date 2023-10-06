@@ -14,7 +14,7 @@ SymbolTable::SymbolTable() {
 	m_symbols[")"] = TT_PAR2;        
     m_symbols["{"] = TT_CHAV1;        
     m_symbols["}"] = TT_CHAV2;     
-	m_symbols["\""] = TT_QUOTE; 
+	//m_symbols["\""] = TT_QUOTE; 
 	m_symbols["=="] = TT_EQUAL; 
 	m_symbols["="] = TT_ASSIGN; 
 	m_symbols["!="] = TT_NOT_EQUAL;  
@@ -62,8 +62,10 @@ enum TokenType SymbolTable::find(const std::string& token) {
 void SymbolTable::showTable() const {
 	
 	for (auto it = m_symbols.begin(); it != m_symbols.end(); it++) {
-		std::cout << std::setw(7) << it->first; 
+		std::cout << std::setw(15) << it->first;
+		std::cout << std::setw(2) << " ";  
 		std::cout << "|";
-		std::cout << std::setw(7) << it->second << std::endl;
+		std::cout << std::setw(2) << " ";
+		std::cout << std::setw(4) << it->second << std::endl;
 	}
 }

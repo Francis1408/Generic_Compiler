@@ -14,8 +14,12 @@ LexicalAnalysis::~LexicalAnalysis() {
 }
 void LexicalAnalysis::showTable() {
     std::cout << "---------TABELA DE SÍMBOLOS---------" << std::endl;
-    std::cout << std::setw(15) << "LEXEMA" << 
-    " | " << "TOKEN ID" << std::endl;
+    std::cout << "------------------------------------" << std::endl;
+    std::cout << std::setw(15) << "LEXEMA";
+    std::cout << std::setw(2) << " ";
+    std::cout << "|";
+    std::cout << std::setw(2) << " "; 
+    std::cout << std::setw(4) << "TOKEN ID" << std::endl;
     this->m_st.showTable();
 }
 
@@ -28,8 +32,8 @@ Lexeme LexicalAnalysis::nextToken() {
     while(state != 15 && state != 16) {
         int c = fgetc(m_input);
 
-        //std::cout << "[" << state << ", " << c << " ('" 
-        //          << (char) c << "')]" << std::endl;
+       // std::cout << "[" << state << ", " << c << " ('" 
+       //           << (char) c << "')]" << std::endl;
         switch (state)
         {
         case 1:
@@ -39,6 +43,7 @@ Lexeme LexicalAnalysis::nextToken() {
                 m_line++;
                 state = 1;
             } else if (c == '/') {
+                lex.token += (char) c;
                 state = 2;
             } else if (c == '=' || c == '<' || c == '>' || c == '!') {
                 lex.token += (char) c;
@@ -79,11 +84,15 @@ Lexeme LexicalAnalysis::nextToken() {
         case 2:
             if (c == '/') {
                 state = 3;
+                lex.token = "";
             } else if(c == '*'){
                 state = 4;
+                lex.token = "";
             } else {
-                if (c != -1) 
+                if (c != -1) {
                     ungetc(c, m_input);
+                }
+                    
                 state = 15;
             }
             break;
