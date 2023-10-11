@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum TokenType{
+enum TokenType {
 	// Specials
 	 TT_UNEXPECTED_EOF = -2,
 	 TT_INVALID_TOKEN  = -1,

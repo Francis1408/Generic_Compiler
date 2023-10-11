@@ -41,6 +41,7 @@ SymbolTable::SymbolTable() {
 	m_symbols["string"] = TT_STRING;
 
 
+
 }
 SymbolTable::~SymbolTable(){
 
