@@ -22,10 +22,14 @@ void SyntaticAnalysis::advance() {
 }
 
 void SyntaticAnalysis::eat(enum TokenType type) {
-    std::cout << "Expected (..., " << tt2str(type) 
+    /*std::cout << "Expected (..., " << tt2str(type) 
               << "), found (\"" << m_current.token << "\", " 
               << tt2str(m_current.type) << ")" << std::endl ;
-    if(type ==  m_current.type) {
+    */
+    if(type ==  m_current.type && type != TT_END_OF_FILE) {
+        advance();
+    } else if (type == TT_END_OF_FILE) {
+        std::cout << "Análise léxica feita com sucesso!" << std::endl;
         advance();
     } else {
         showError();
@@ -33,6 +37,7 @@ void SyntaticAnalysis::eat(enum TokenType type) {
 }
 
 void SyntaticAnalysis::showError() {
+    std::cout << "Erro na linha: ";
     std::cout << std::setw(2) << std::setfill('0') << m_lex.line() << std::endl;
 
     switch(m_current.type) {
@@ -85,7 +90,7 @@ void SyntaticAnalysis::procIdent_list() {
     //std::cout << "ENTROU EM <ident-list>" << std::endl;
     eat(TT_ID);
     while(m_current.type == TT_COMMA) {
-        advance();
+        eat(TT_COMMA);
         eat(TT_ID);
     }
 }
@@ -108,7 +113,7 @@ void SyntaticAnalysis::procType() {
 
 // <body> ::= “{” <stmt-list> “}”
 void SyntaticAnalysis::procBody() {
-   //std::cout << "ENTROU EM <body>" << std::endl; 
+    //std::cout << "ENTROU EM <body>" << std::endl; 
     eat(TT_CHAV1);
     procStmt_list();
     eat(TT_CHAV2);
@@ -175,7 +180,7 @@ void SyntaticAnalysis::procIf_stmt_l() {
         eat(TT_CHAV1);
         procStmt_list();
         eat(TT_CHAV2);
-    } else if(m_current.type == TT_SEMICOLON) {
+    } else if(m_current.type == TT_SEMICOLON ) {
         // λ
     } else {
         showError();
@@ -184,7 +189,7 @@ void SyntaticAnalysis::procIf_stmt_l() {
 
 // <condition> ::= <expression>
 void SyntaticAnalysis::procCondition() {
-    std::cout << "ENTROU EM <condition>" << std::endl;
+    //std::cout << "ENTROU EM <condition>" << std::endl;
     procExpression();
 }
 
@@ -201,7 +206,7 @@ void SyntaticAnalysis::procDo_stmt() {
 
 // <do-suffix> ::= while “(” <condition> “)”
 void SyntaticAnalysis::procDo_suffix() {
-   //std::cout << "ENTROU EM <do-suffix>" << std::endl;
+    //std::cout << "ENTROU EM <do-suffix>" << std::endl;
     eat(TT_WHILE);
     eat(TT_PAR1);
     procCondition();
@@ -234,7 +239,7 @@ void SyntaticAnalysis::procWritable() {
 
 // <expression>	::= <simple-expr> <expression’>
 void SyntaticAnalysis::procExpression() {
-   // std::cout << "ENTROU EM <expression>" << std::endl;
+    //std::cout << "ENTROU EM <expression>" << std::endl;
     procSimple_expr();
     procExpression_l();
 }
@@ -258,7 +263,7 @@ void SyntaticAnalysis::procExpression_l() {
 
 // <simple-expr> ::= <term> <simple-expr’>
 void SyntaticAnalysis::procSimple_expr() {
-    ///std::cout << "ENTROU EM <simple-expr>" << std::endl;
+    //std::cout << "ENTROU EM <simple-expr>" << std::endl;
     procTerm();
     procSimple_expr_l();
 }
@@ -271,8 +276,8 @@ void SyntaticAnalysis::procSimple_expr_l() {
         procTerm();
         procSimple_expr_l();
     } else if(m_current.type == TT_PAR2 || m_current.type == TT_SEMICOLON || m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
-              m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
-              m_current.type == TT_EQUAL) {
+       m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
+       m_current.type == TT_EQUAL) {
         // λ
     } else {
         showError();
@@ -294,20 +299,25 @@ void SyntaticAnalysis::procTerm_l() {
         procFactor_a();
         procTerm_l();
     } else if(m_current.type == TT_ADD || m_current.type == TT_SUB || m_current.type == TT_OR || 
-              m_current.type == TT_SEMICOLON || m_current.type == TT_PAR2) {
+              m_current.type == TT_SEMICOLON || m_current.type == TT_PAR2 || m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
+              m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
+              m_current.type == TT_EQUAL) {
         // λ
     } else {
         showError();
     }
 }
 
-// <factor-a> ::= <factor> | “!” <facotr>
+// <factor-a> ::= <factor> | “!” <facotr> | “-” <factor>
 void SyntaticAnalysis::procFactor_a() {
     //std::cout << "ENTROU EM <factor-a>" << std::endl;
     if(m_current.type == TT_ID || m_current.type == TT_INTEGER || m_current.type == TT_LITERAL || m_current.type == TT_REAL || m_current.type == TT_PAR1) {
         procFactor();
     } else if(m_current.type == TT_NOT) {
-        advance();
+        eat(TT_NOT);
+        procFactor();  
+    } else if (m_current.type == TT_SUB) {
+        eat(TT_SUB);
         procFactor();
     } else {
         showError();
