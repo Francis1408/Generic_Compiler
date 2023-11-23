@@ -1,10 +1,9 @@
-class Teste4 
-// Outro programa de teste
-    int idade, j, k, total;
-    string nome, texto;
-
+class Teste4         
+int idade, j, k, total;
+string nome, texto;
 {
-write("Digite o seu nome:" );
+// Outro programa de teste
+write("Digite o seu nome: ");
 read(nome);
 write("Digite o seu sobrenome");
 read(sobrenome);
