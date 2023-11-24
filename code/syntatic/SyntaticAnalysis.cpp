@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
+
+#include "semantic/type/ExprType"
 #include "SyntaticAnalysis.h"
 
 
@@ -107,6 +109,9 @@ void SyntaticAnalysis::procType() {
     } else {
         showError();
     }
+
+    ExprType* et = new ExprType()
+    return et;
  
 
 }

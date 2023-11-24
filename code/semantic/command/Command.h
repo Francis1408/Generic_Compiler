@@ -6,6 +6,8 @@ class Command {
         virtual ~Command() {}
 
         int line() const { return m_line; }
+        virtual void rule() = 0;
+        
     protected:
         Command(int line) : m_line(line) {}
 
