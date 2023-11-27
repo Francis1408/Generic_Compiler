@@ -3,6 +3,7 @@
 
 #include <map>
 #include "TokenType.h"
+#include "TableInfo.h"
 
 class SymbolTable {
     public:
@@ -15,7 +16,7 @@ class SymbolTable {
         void showTable() const;
 
     private:
-        std::map<std::string, enum TokenType> m_symbols;
+        std::map<std::string, TableInfo* > m_symbols;
 };
 
 #endif

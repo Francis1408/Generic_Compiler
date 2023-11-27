@@ -6,39 +6,39 @@
 
 SymbolTable::SymbolTable() {
 
-	m_symbols[";"] = TT_SEMICOLON;	  
-	m_symbols[","] = TT_COMMA;       
-	m_symbols["."] = TT_PERIOD;	  
-	m_symbols[":"] = TT_POINTS;      
-	m_symbols["("] = TT_PAR1;         
-	m_symbols[")"] = TT_PAR2;        
-    m_symbols["{"] = TT_CHAV1;        
-    m_symbols["}"] = TT_CHAV2;     
-	//m_symbols["\""] = TT_QUOTE; 
-	m_symbols["=="] = TT_EQUAL; 
-	m_symbols["="] = TT_ASSIGN; 
-	m_symbols["!="] = TT_NOT_EQUAL;  
-	m_symbols["<"] = TT_LOWER;     
-	m_symbols[">"] = TT_GREATER;      
-	m_symbols["<="] = TT_LESS_EQUAL;
-	m_symbols[">="] = TT_GREATER_EQUAL;
-	m_symbols["&&"] = TT_AND;       
-	m_symbols["||"] = TT_OR;          
-    m_symbols["!"] = TT_NOT;      
-	m_symbols["+"] = TT_ADD;   
-	m_symbols["-"] = TT_SUB;      
-	m_symbols["*"] = TT_MUL;         
-	m_symbols["/"] = TT_DIV;       
-	m_symbols["class"] = TT_CLASS;	  
-	m_symbols["if"] = TT_IF;        
-	m_symbols["else"] = TT_ELSE;         
-	m_symbols["while"] = TT_WHILE;
-    m_symbols["write"] = TT_WRITE;                 
-	m_symbols["read"] = TT_READ;        
-	m_symbols["do"] = TT_DO;
-	m_symbols["int"] = TT_INT;
-	m_symbols["float"] = TT_FLOAT;
-	m_symbols["string"] = TT_STRING;
+	m_symbols[";"] = new TableInfo(TT_SEMICOLON, "NULL");	  
+	m_symbols[","] = new TableInfo(TT_COMMA, "NULL");       
+	m_symbols["."] = new TableInfo(TT_PERIOD, "NULL");	  
+	m_symbols[":"] = new TableInfo(TT_POINTS, "NULL");      
+	m_symbols["("] = new TableInfo(TT_PAR1, "NULL");         
+	m_symbols[")"] = new TableInfo(TT_PAR2, "NULL");        
+    m_symbols["{"] = new TableInfo(TT_CHAV1, "NULL");        
+    m_symbols["}"] = new TableInfo(TT_CHAV2, "NULL");     
+	//m_symbols["\""] = TT_QUOTE, "NULL"); 
+	m_symbols["=="] = new TableInfo(TT_EQUAL, "NULL"); 
+	m_symbols["="] = new TableInfo(TT_ASSIGN, "NULL"); 
+	m_symbols["!="] = new TableInfo(TT_NOT_EQUAL, "NULL");  
+	m_symbols["<"] = new TableInfo(TT_LOWER, "NULL");     
+	m_symbols[">"] = new TableInfo(TT_GREATER, "NULL");      
+	m_symbols["<="] = new TableInfo(TT_LESS_EQUAL, "NULL");
+	m_symbols[">="] = new TableInfo(TT_GREATER_EQUAL, "NULL");
+	m_symbols["&&"] = new TableInfo(TT_AND, "NULL");       
+	m_symbols["||"] = new TableInfo(TT_OR, "NULL");          
+    m_symbols["!"] = new TableInfo(TT_NOT, "NULL");      
+	m_symbols["+"] = new TableInfo(TT_ADD, "NULL");   
+	m_symbols["-"] = new TableInfo(TT_SUB, "NULL");      
+	m_symbols["*"] = new TableInfo(TT_MUL, "NULL");         
+	m_symbols["/"] = new TableInfo(TT_DIV, "NULL");       
+	m_symbols["class"] = new TableInfo(TT_CLASS, "NULL");	  
+	m_symbols["if"] = new TableInfo(TT_IF, "NULL");        
+	m_symbols["else"] = new TableInfo(TT_ELSE, "NULL");         
+	m_symbols["while"] = new TableInfo(TT_WHILE, "NULL");
+    m_symbols["write"] = new TableInfo(TT_WRITE, "NULL");                 
+	m_symbols["read"] = new TableInfo(TT_READ, "NULL");        
+	m_symbols["do"] = new TableInfo(TT_DO, "NULL");
+	m_symbols["int"] = new TableInfo(TT_INT, "NULL");
+	m_symbols["float"] = new TableInfo(TT_FLOAT, "NULL");
+	m_symbols["string"] = new TableInfo(TT_STRING, "NULL");
 
 
 
@@ -54,9 +54,9 @@ bool SymbolTable::contains(const std::string& token) const {
 
 enum TokenType SymbolTable::find(const std::string& token) {
 	if(this->contains(token)) {
-		return m_symbols[token];
+		return m_symbols[token]->token;
 	} else {
-		m_symbols[token] = TT_ID;  // Adiciona identificador na tabela de símbolos
+		m_symbols[token]->token = TT_ID;  // Adiciona identificador na tabela de símbolos
 		return TT_ID;
 	}
 }
