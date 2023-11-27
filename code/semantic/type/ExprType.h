@@ -1,21 +1,16 @@
 #ifndef EXPR_TYPE_H
 #define EXPR_TYPE_H
 
+#include <string>
+
 class ExprType {
     public:
-        enum Types {
-            ERROR = -1,
-            INTEGER,
-            STRING,
-            FLOAT,
-        };
-
-        ExprType(enum Types type);
+        ExprType(std::string type, int m_line);
         virtual ~ExprType();
 
+        int m_line;
+        std::string type;
 
-    private:
-        enum Types type;
 };
 
 #endif

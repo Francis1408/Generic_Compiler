@@ -2,6 +2,9 @@
 #define SYNTATIC_ANALYSIS_H
 
 #include "../lexical/LexicalAnalysis.h"
+
+class ExprType;
+class IdentList;
 class SyntaticAnalysis {
     public:
         SyntaticAnalysis(LexicalAnalysis& lex);
@@ -20,8 +23,8 @@ class SyntaticAnalysis {
         void procProgram();
         void procDecl_list();
         void procDecl();
-        void procIdent_list();
-        void procType();
+        IdentList* procIdent_list();
+        ExprType* procType();
         void procBody();
         void procStmt_list();
         void procStmt();

@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <iomanip>
 
-#include "semantic/type/ExprType"
+#include "../semantic/type/ExprType.h"
+#include "../semantic/declaration/IdentList.h"
+#include "../semantic/declaration/Identifier.h"
+
 #include "SyntaticAnalysis.h"
 
 
@@ -82,37 +85,64 @@ void SyntaticAnalysis::procDecl_list() {
 
 // <decl> ::= <type> <ident-list>
 void SyntaticAnalysis::procDecl() {
-    //std::cout << "ENTROU EM <decl>" << std::endl;
-    procType();
-    procIdent_list();
+    std::cout << "ENTROU EM <decl>" << std::endl;
+    ExprType* eType =  procType();
+    IdentList* iList = procIdent_list();
+
+
 }
 
 // <ident-list> ::= identifier {“,” identifier}
-void SyntaticAnalysis::procIdent_list() {
+IdentList* SyntaticAnalysis::procIdent_list() {
     //std::cout << "ENTROU EM <ident-list>" << std::endl;
+    std::string tmp = m_current.token;
     eat(TT_ID);
+
+    int line = m_lex.line();
+    IdentList* identifierList = new IdentList(line);
+    Identifier* id = new Identifier(tmp, line);
+    identifierList->addId(id);
+    
     while(m_current.type == TT_COMMA) {
         eat(TT_COMMA);
+        tmp = m_current.token;
         eat(TT_ID);
+        line = m_lex.line();
+        Identifier* id = new Identifier(tmp, line);
+        identifierList->addId(id);
     }
+    //identifierList->showList();
+    return identifierList;
 }
 
 // <type> ::= int | string | float
-void SyntaticAnalysis::procType() {
-    //std::cout << "ENTROU EM <type>" << std::endl;
+ExprType* SyntaticAnalysis::procType() {
+    std::string type;
+    int line;
+
     if(m_current.type == TT_INT) {
+        type = "INTEGER";
         eat(TT_INT);
+        line = m_lex.line();
+
     } else if(m_current.type == TT_STRING) {
+        type = "STRING";
         eat(TT_STRING);
+        line = m_lex.line();
+
     } else if(m_current.type == TT_FLOAT) {
+        type = "FLOAT";
         eat(TT_FLOAT);
+        line = m_lex.line();
     } else {
+        type = "ERROR";
         showError();
+        line = m_lex.line();
     }
 
-    ExprType* et = new ExprType()
-    return et;
+    ExprType* et = new ExprType(type, line);
  
+    return et;
 
 }
 

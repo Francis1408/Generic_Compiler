@@ -51,11 +51,12 @@ bool SymbolTable::contains(const std::string& token) const {
     return m_symbols.find(token) != m_symbols.end();
 
 }
+
 enum TokenType SymbolTable::find(const std::string& token) {
 	if(this->contains(token)) {
 		return m_symbols[token];
 	} else {
-		m_symbols[token] = TT_ID; // Adiciona identificador na tabela de símbolos
+		m_symbols[token] = TT_ID;  // Adiciona identificador na tabela de símbolos
 		return TT_ID;
 	}
 }
@@ -69,4 +70,8 @@ void SymbolTable::showTable() const {
 		std::cout << std::setw(2) << " ";
 		std::cout << std::setw(4) << it->second << std::endl;
 	}
+}
+
+void SymbolTable::addId(const std::string& token) {
+
 }

@@ -5,7 +5,9 @@ TARGET=compiler
 OBJS=compiler.o lexical/SymbolTable.o lexical/LexicalAnalysis.o \
 	 syntatic/SyntaticAnalysis.o \
 	 semantic/type/ExprType.o \
-	 semantic/command/WriteCommand.o
+	 semantic/declaration/IdentList.o \
+	 semantic/declaration/Identifier.o
+	 
 
 all: $(TARGET)
 
@@ -21,11 +23,13 @@ lexical/SymbolTable.o: lexical/TokenType.h
 
 lexical/LexicalAnalysis.o: lexical/Lexeme.h lexical/SymbolTable.h
 
-syntatic/SyntaticAnalysis.o:
+syntatic/SyntaticAnalysis.o: syntatic/SyntaticAnalysis.h semantic/command/*.h semantic/type/*.h semantic/declaration/*.h
 
-semantic/type/ExprType.o:
+semantic/type/ExprType.o: semantic/type/ExprType.h
 
-semantic/command/WriteCommand.o:
+semantic/declaration/IdentList.o: semantic/declaration/IdentList.h semantic/declaration/Identifier.h
+
+semantic/declaration/Identifier.o: semantic/declaration/Identifier.h
 
 $(TARGET): $(OBJS)
 		   $(CXX) -o $(TARGET) $(OBJS)

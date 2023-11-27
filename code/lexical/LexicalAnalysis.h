@@ -13,6 +13,8 @@ class LexicalAnalysis {
         int line() const {return m_line;}
 
         void showTable();
+        bool findToken();
+        void addToken();
 
     private:
         int m_line;

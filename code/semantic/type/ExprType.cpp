@@ -1,6 +1,11 @@
 #include "ExprType.h"
 
-ExprType::ExprType(enum Types type) {}
+#include <string>
+
+ExprType::ExprType(std::string type, int line) {
+    this->type = type;
+    this->m_line = line;
+}
 
 ExprType::~ExprType() {}
 
