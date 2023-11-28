@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS=-g -ggdb -O2 -Wall
 
 TARGET=compiler 
-OBJS=compiler.o lexical/SymbolTable.o lexical/LexicalAnalysis.o \
+OBJS=compiler.o  lexical/TableInfo.o lexical/SymbolTable.o lexical/LexicalAnalysis.o \
 	 syntatic/SyntaticAnalysis.o \
 	 semantic/type/ExprType.o \
 	 semantic/declaration/IdentList.o \
@@ -19,7 +19,9 @@ install:
 
 compiler.o:
 
-lexical/SymbolTable.o: lexical/TokenType.h
+lexical/TableInfo.o : lexical/TokenType.h
+
+lexical/SymbolTable.o: lexical/TokenType.h lexical/TableInfo.h
 
 lexical/LexicalAnalysis.o: lexical/Lexeme.h lexical/SymbolTable.h
 

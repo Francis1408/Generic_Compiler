@@ -13,8 +13,7 @@ class LexicalAnalysis {
         int line() const {return m_line;}
 
         void showTable();
-        bool findToken();
-        void addToken();
+        bool addToken(std::string& token, std::string type);
 
     private:
         int m_line;

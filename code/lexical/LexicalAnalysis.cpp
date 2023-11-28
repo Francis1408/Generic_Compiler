@@ -19,8 +19,16 @@ void LexicalAnalysis::showTable() {
     std::cout << std::setw(2) << " ";
     std::cout << "|";
     std::cout << std::setw(2) << " "; 
-    std::cout << std::setw(4) << "TOKEN ID" << std::endl;
+    std::cout << std::setw(4) << "TOKEN ID";
+    std::cout << std::setw(2) << " ";
+    std::cout << "|";
+    std::cout << std::setw(2) << " ";
+    std::cout << std::setw(4) << "TOKEN TYPE" << std::endl;
     this->m_st.showTable();
+}
+
+bool LexicalAnalysis::addToken(std::string& token, std::string type) {
+    return this->m_st.addId(token, type);
 }
 
 Lexeme LexicalAnalysis::nextToken() {

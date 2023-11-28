@@ -56,7 +56,7 @@ enum TokenType SymbolTable::find(const std::string& token) {
 	if(this->contains(token)) {
 		return m_symbols[token]->token;
 	} else {
-		m_symbols[token]->token = TT_ID;  // Adiciona identificador na tabela de símbolos
+		// this->addId(token);  // Adiciona identificador na tabela de símbolos
 		return TT_ID;
 	}
 }
@@ -68,10 +68,19 @@ void SymbolTable::showTable() const {
 		std::cout << std::setw(2) << " ";  
 		std::cout << "|";
 		std::cout << std::setw(2) << " ";
-		std::cout << std::setw(4) << it->second << std::endl;
+		std::cout << std::setw(4) << it->second->token;
+		std::cout << std::setw(2) << " ";  
+		std::cout << "|";
+		std::cout << std::setw(2) << " ";
+		std::cout << std::setw(4) << it->second->type << std::endl;
 	}
 }
 
-void SymbolTable::addId(const std::string& token) {
-
+bool SymbolTable::addId(std::string& token, std::string type) {
+	if(this->contains(token)) {
+		return false;
+	} else {
+		m_symbols[token] = new TableInfo(TT_ID, type); 
+		return true;
+	}
 }

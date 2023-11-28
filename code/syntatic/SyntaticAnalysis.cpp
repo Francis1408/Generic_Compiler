@@ -20,6 +20,7 @@ SyntaticAnalysis::~SyntaticAnalysis() {
 void SyntaticAnalysis::start() {
     procProgram();
     eat(TT_END_OF_FILE);
+    m_lex.showTable();
 }
 
 void SyntaticAnalysis::advance() {
