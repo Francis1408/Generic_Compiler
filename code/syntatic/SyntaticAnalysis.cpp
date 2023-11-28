@@ -20,7 +20,6 @@ SyntaticAnalysis::~SyntaticAnalysis() {
 void SyntaticAnalysis::start() {
     procProgram();
     eat(TT_END_OF_FILE);
-    m_lex.showTable();
 }
 
 void SyntaticAnalysis::advance() {
@@ -86,10 +85,30 @@ void SyntaticAnalysis::procDecl_list() {
 
 // <decl> ::= <type> <ident-list>
 void SyntaticAnalysis::procDecl() {
-    std::cout << "ENTROU EM <decl>" << std::endl;
+    //std::cout << "ENTROU EM <decl>" << std::endl;
     ExprType* eType =  procType();
     IdentList* iList = procIdent_list();
 
+    //Verfica unicidade e adiciona ID's na tabela
+    for(std::list<Identifier*>::iterator it = iList->idList.begin(),
+        ed = iList->idList.end(); it != ed; it++) {
+            Identifier* i = *it;
+            int line = i->m_line;
+            try{
+                if(m_lex.addToken(i->id, eType->type));
+                else {
+                    throw(line);
+                }
+                //std::cout << "Identifier(" << i->id << "): ADICIONADO "<< std::endl;
+            }
+            catch(int line) {
+                std::cout << "Erro na linha: ";
+                std::cout << std::setw(2) << std::setfill('0') << line << std::endl;
+                std::cout << "Identificador [" << i->id << "] ja declarado"<< std::endl;
+
+                exit(1);
+            }
+        }
 
 }
 

@@ -69,7 +69,7 @@ void SymbolTable::showTable() const {
 		std::cout << "|";
 		std::cout << std::setw(2) << " ";
 		std::cout << std::setw(4) << it->second->token;
-		std::cout << std::setw(2) << " ";  
+		std::cout << std::setw(6) << " ";  
 		std::cout << "|";
 		std::cout << std::setw(2) << " ";
 		std::cout << std::setw(4) << it->second->type << std::endl;
