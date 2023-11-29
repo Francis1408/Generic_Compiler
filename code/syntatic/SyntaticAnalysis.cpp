@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include "../semantic/type/ExprType.h"
+#include "../semantic/command/ReadCommand.h"
 #include "../semantic/declaration/IdentList.h"
 #include "../semantic/declaration/Identifier.h"
 
@@ -269,12 +270,23 @@ void SyntaticAnalysis::procDo_suffix() {
 }
 
 // <read-stmt> ::= read “(” identifier “)”
-void SyntaticAnalysis::procRead_stmt() {
+ReadCommand* SyntaticAnalysis::procRead_stmt() {
     //std::cout << "ENTROU EM <read-stmt>" << std::endl;
     eat(TT_READ);
     eat(TT_PAR1);
+
+    // Fetching identifier data
+    std::string tmp = m_current.token;
     eat(TT_ID);
+    int line = m_lex.line();
+    ReadCommand* rc = new ReadCommand(line);
+    TableInfo* tb = m_lex.findToken(tmp);
     eat(TT_PAR2);
+
+    rc->m_type = rc->rule(tb);
+    
+    return rc;
+
 }
 
 // <write-stmt> ::= write “(” <writable> “)”

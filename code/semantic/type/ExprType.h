@@ -8,8 +8,8 @@ class ExprType {
         ExprType(std::string type, int m_line);
         virtual ~ExprType();
 
-        int m_line;
         std::string type;
+        int m_line;
 
 };
 

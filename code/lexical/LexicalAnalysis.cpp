@@ -31,6 +31,15 @@ bool LexicalAnalysis::addToken(std::string& token, std::string type) {
     return this->m_st.addId(token, type);
 }
 
+TableInfo* LexicalAnalysis::findToken(const std::string& token) {
+    TableInfo * tb = m_st.find(token);
+    if(tb->type == "NULL") {
+        return new TableInfo(TT_ID, "ERROR");
+    } else {
+        return tb;
+    }
+}
+
 Lexeme LexicalAnalysis::nextToken() {
     int state;
     Lexeme lex;
@@ -255,7 +264,7 @@ Lexeme LexicalAnalysis::nextToken() {
         
     }
     if (state == 15) {
-        lex.type = m_st.find(lex.token);
+        lex.type = m_st.find(lex.token)->token;
     }
 
     return lex;

@@ -5,6 +5,7 @@
 
 class ExprType;
 class IdentList;
+class ReadCommand;
 class SyntaticAnalysis {
     public:
         SyntaticAnalysis(LexicalAnalysis& lex);
@@ -34,7 +35,7 @@ class SyntaticAnalysis {
         void procCondition();
         void procDo_stmt();
         void procDo_suffix();
-        void procRead_stmt();
+        ReadCommand* procRead_stmt();
         void procWrite_stmt();
         void procWritable();
         void procExpression();

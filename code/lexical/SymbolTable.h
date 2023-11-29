@@ -11,7 +11,7 @@ class SymbolTable {
         virtual ~SymbolTable();
 
         bool contains(const std::string& token) const;
-        enum TokenType find(const std::string& token);
+        TableInfo* find(const std::string& token);
         bool addId(std::string& token, std::string type);
         void showTable() const;
 

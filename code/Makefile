@@ -6,7 +6,8 @@ OBJS=compiler.o  lexical/TableInfo.o lexical/SymbolTable.o lexical/LexicalAnalys
 	 syntatic/SyntaticAnalysis.o \
 	 semantic/type/ExprType.o \
 	 semantic/declaration/IdentList.o \
-	 semantic/declaration/Identifier.o
+	 semantic/declaration/Identifier.o \
+	 semantic/command/ReadCommand.o
 	 
 
 all: $(TARGET)
@@ -32,6 +33,8 @@ semantic/type/ExprType.o: semantic/type/ExprType.h
 semantic/declaration/IdentList.o: semantic/declaration/IdentList.h semantic/declaration/Identifier.h
 
 semantic/declaration/Identifier.o: semantic/declaration/Identifier.h
+
+semantic/command/ReadCommand.o: semantic/type/ExprType.h semantic/command/Command.h lexical/TableInfo.h
 
 $(TARGET): $(OBJS)
 		   $(CXX) -o $(TARGET) $(OBJS)

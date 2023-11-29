@@ -14,6 +14,7 @@ class LexicalAnalysis {
 
         void showTable();
         bool addToken(std::string& token, std::string type);
+        TableInfo* findToken(const std::string& token);
 
     private:
         int m_line;
