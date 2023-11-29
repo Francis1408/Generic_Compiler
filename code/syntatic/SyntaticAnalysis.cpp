@@ -4,8 +4,10 @@
 
 #include "../semantic/type/ExprType.h"
 #include "../semantic/command/ReadCommand.h"
+#include "../semantic/command/WriteCommand.h"
 #include "../semantic/declaration/IdentList.h"
 #include "../semantic/declaration/Identifier.h"
+#include "../semantic/expression/RelopExpr.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -21,6 +23,7 @@ SyntaticAnalysis::~SyntaticAnalysis() {
 void SyntaticAnalysis::start() {
     procProgram();
     eat(TT_END_OF_FILE);
+    m_lex.showTable();
 }
 
 void SyntaticAnalysis::advance() {
@@ -284,7 +287,7 @@ ReadCommand* SyntaticAnalysis::procRead_stmt() {
     eat(TT_PAR2);
 
     rc->m_type = rc->rule(tb);
-    
+
     return rc;
 
 }
@@ -406,23 +409,43 @@ void SyntaticAnalysis::procFactor() {
 }
 
 // <relop> ::= “>” | “>=” | “<” | “<=”  | “!=” | “==”
-void SyntaticAnalysis::procRelop() {
+RelopExpr* SyntaticAnalysis::procRelop() {
     //std::cout << "ENTROU EM <relop>" << std::endl;
+    int line;
+    
     if(m_current.type == TT_EQUAL) {
         eat(TT_EQUAL);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::EQUAL);
+
     } else if ( m_current.type == TT_NOT_EQUAL) {
         eat(TT_NOT_EQUAL);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::NOT_EQUAL);
+
     } else if (m_current.type == TT_LOWER) {
         eat(TT_LOWER);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::LOWER);
+
     } else if (m_current.type == TT_GREATER) {
         eat(TT_GREATER);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::GREATER);
+
     } else if (m_current.type == TT_LESS_EQUAL) {
         eat(TT_LESS_EQUAL);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::LESS_EQUAL);
+
     } else if ( m_current.type == TT_GREATER_EQUAL) {
         eat(TT_GREATER_EQUAL);
+        line = m_lex.line();
+        RelopExpr* re = new RelopExpr(line, RelopExpr::GREATER_EQUAL);
     } else {
         showError();
     }
+    
 }
 
 // <addop> ::= “+” | “-” | “||”
@@ -454,16 +477,29 @@ void SyntaticAnalysis::procMulop() {
 }
 
 // <constant> ::= integer_const | literal | real_const
-void SyntaticAnalysis::procConstant() {
+ExprType* SyntaticAnalysis::procConstant() {
     //std::cout << "ENTROU EM <constant>" << std::endl;
+    std::string type;
+    int line;
+
     if(m_current.type == TT_INTEGER) {
+        type = "INTEGER";
         eat(TT_INTEGER);
+        line = m_lex.line();
     } else if (m_current.type == TT_LITERAL) {
+        type = "STRING";
         eat(TT_LITERAL);
+        line = m_lex.line();
     } else if (m_current.type == TT_REAL ) {
+        type = "FLOAT";
         eat(TT_REAL);
+        line = m_lex.line();
     } else {
+        type = "ERROR";
         showError();
     }
+
+    ExprType* et = new ExprType(type, line);
+    return et;
 }
 

@@ -6,7 +6,7 @@ string nome, texto;
 write("Digite o seu nome: ");
 read(nome);
 write("Digite o seu sobrenome");
-read(sobrenome);
+// read(sobrenome);
 write("Digite a sua idade: ");
 read (idade);
 k = i * (5-i * 50 / 10);
