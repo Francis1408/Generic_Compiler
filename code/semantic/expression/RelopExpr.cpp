@@ -10,8 +10,3 @@ RelopExpr::RelopExpr(int line, enum RelopExpr::Op op)  {
 RelopExpr::~RelopExpr() {
 
 }
-
-bool RelopExpr::expr() {
-
-  
-}       

@@ -7,6 +7,9 @@ class ExprType;
 class IdentList;
 class ReadCommand;
 class RelopExpr;
+class MulopExpr;
+class AddopExpr;
+class FactorExpr;
 class SyntaticAnalysis {
     public:
         SyntaticAnalysis(LexicalAnalysis& lex);
@@ -46,10 +49,10 @@ class SyntaticAnalysis {
         void procTerm();
         void procTerm_l();
         void procFactor_a();
-        void procFactor();
+        FactorExpr* procFactor();
         RelopExpr* procRelop();
-        void procAddop();
-        void procMulop();
+        AddopExpr* procAddop();
+        MulopExpr* procMulop();
         ExprType* procConstant();
 };
 

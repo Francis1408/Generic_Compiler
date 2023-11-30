@@ -8,6 +8,9 @@
 #include "../semantic/declaration/IdentList.h"
 #include "../semantic/declaration/Identifier.h"
 #include "../semantic/expression/RelopExpr.h"
+#include "../semantic/expression/MulopExpr.h"
+#include "../semantic/expression/AddopExpr.h"
+#include "../semantic/expression/FactorExpr.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -385,22 +388,40 @@ void SyntaticAnalysis::procFactor_a() {
         procFactor();
     } else if(m_current.type == TT_NOT) {
         eat(TT_NOT);
-        procFactor();  
+        procFactor();  //precisa ser BOOL
     } else if (m_current.type == TT_SUB) {
         eat(TT_SUB);
-        procFactor();
+        procFactor(); //precisa ser numerico
     } else {
         showError();
     }
 }
 
 // <factor>	::= identifier | <constant> | “(” <expression> “)”
-void SyntaticAnalysis::procFactor() {
+FactorExpr* SyntaticAnalysis::procFactor() {
     //std::cout << "ENTROU EM <factor>" << std::endl;
+    int line;
+
     if(m_current.type == TT_ID) {
+        // Fetching identifier data
+        std::string tmp = m_current.token;
         eat(TT_ID);
+        int line = m_lex.line();
+
+        FactorExpr* fe = new FactorExpr(line);
+        TableInfo* tb = m_lex.findToken(tmp);
+
+        fe->m_type = fe->expr(tb);
+
+        return fe;
+
     } else if(m_current.type == TT_INTEGER || m_current.type == TT_LITERAL || m_current.type == TT_REAL) {
-        procConstant();
+        ExprType* et =  procConstant();
+        line = m_lex.line();
+        FactorExpr* fe = new FactorExpr(line);
+        fe->m_type = new ExprType(et->type, line);
+        return fe;
+
     } else if(m_current.type == TT_PAR1) {
         eat(TT_PAR1);
         procExpression();
@@ -417,31 +438,37 @@ RelopExpr* SyntaticAnalysis::procRelop() {
         eat(TT_EQUAL);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::EQUAL);
+        return re;
 
     } else if ( m_current.type == TT_NOT_EQUAL) {
         eat(TT_NOT_EQUAL);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::NOT_EQUAL);
+        return re;
 
     } else if (m_current.type == TT_LOWER) {
         eat(TT_LOWER);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::LOWER);
+        return re;
 
     } else if (m_current.type == TT_GREATER) {
         eat(TT_GREATER);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::GREATER);
+        return re;
 
     } else if (m_current.type == TT_LESS_EQUAL) {
         eat(TT_LESS_EQUAL);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::LESS_EQUAL);
+        return re;
 
     } else if ( m_current.type == TT_GREATER_EQUAL) {
         eat(TT_GREATER_EQUAL);
         line = m_lex.line();
         RelopExpr* re = new RelopExpr(line, RelopExpr::GREATER_EQUAL);
+        return re;
     } else {
         showError();
     }
@@ -449,28 +476,50 @@ RelopExpr* SyntaticAnalysis::procRelop() {
 }
 
 // <addop> ::= “+” | “-” | “||”
-void SyntaticAnalysis::procAddop() {
+AddopExpr* SyntaticAnalysis::procAddop() {
     //std::cout << "ENTROU EM <addop>" << std::endl;
+    int line;
+
     if(m_current.type == TT_ADD){
         eat(TT_ADD);
+        line = m_lex.line();
+        AddopExpr* ae = new AddopExpr(line, AddopExpr::ADD);
+        return ae;
     } else if (m_current.type == TT_SUB) {
         eat(TT_SUB);
+        line = m_lex.line();
+        AddopExpr* ae = new AddopExpr(line, AddopExpr::SUB);
+        return ae;
     } else if (m_current.type == TT_OR ) {
         eat(TT_OR);
+        line = m_lex.line();
+        AddopExpr* ae = new AddopExpr(line, AddopExpr::OR);
+        return ae;
     } else {
         showError();
     }
 }
 
 // <mulop> ::= “*” | “/” | “&&”
-void SyntaticAnalysis::procMulop() {
+MulopExpr* SyntaticAnalysis::procMulop() {
     //std::cout << "ENTROU EM <mulop>" << std::endl;
+    int line;
+
     if(m_current.type == TT_MUL) {
         eat(TT_MUL);
+        line = m_lex.line();
+        MulopExpr* me = new MulopExpr(line, MulopExpr::MUL);
+        return me;
     } else if (m_current.type == TT_DIV) {
         eat(TT_DIV);
+        line = m_lex.line();
+        MulopExpr* me = new MulopExpr(line, MulopExpr::DIV);
+        return me;
     } else if (m_current.type == TT_AND ) {
         eat(TT_AND);
+        line = m_lex.line();
+        MulopExpr* me = new MulopExpr(line, MulopExpr::AND);
+        return me;
     } else {
         showError();
     }
