@@ -11,6 +11,7 @@
 #include "../semantic/expression/MulopExpr.h"
 #include "../semantic/expression/AddopExpr.h"
 #include "../semantic/expression/FactorExpr.h"
+#include "../semantic/expression/Term_l.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -365,35 +366,70 @@ void SyntaticAnalysis::procTerm() {
 }
 
 // <term’> ::= <mulop> <factor-a> <term’> | λ
-void SyntaticAnalysis::procTerm_l() {
+Term_L_Expr* SyntaticAnalysis::procTerm_l() {
     //std::cout << "ENTROU EM <term'>" << std::endl;
+    int line;
+
     if(m_current.type ==  TT_MUL || m_current.type == TT_DIV || m_current.type == TT_AND) {
-        procMulop();
-        procFactor_a();
-        procTerm_l();
+        MulopExpr* me =  procMulop();
+        FactorExpr* fe =  procFactor_a();
+        Term_L_Expr* tl1 = procTerm_l();
+
+        line = m_lex.line();
+        Term_L_Expr* tl2 = new Term_L_Expr(line);
+        tl2->m_type = tl2->expr(me, fe, tl1);
+
+
+
     } else if(m_current.type == TT_ADD || m_current.type == TT_SUB || m_current.type == TT_OR || 
               m_current.type == TT_SEMICOLON || m_current.type == TT_PAR2 || m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
               m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
               m_current.type == TT_EQUAL) {
         // λ
+       Term_L_Expr* tl = new Term_L_Expr(m_lex.line());
+       tl->m_type->type = "NULL";
+       return tl;
     } else {
         showError();
+        return new Term_L_Expr(m_lex.line());
     }
 }
 
 // <factor-a> ::= <factor> | “!” <facotr> | “-” <factor>
-void SyntaticAnalysis::procFactor_a() {
+FactorExpr* SyntaticAnalysis::procFactor_a() {
     //std::cout << "ENTROU EM <factor-a>" << std::endl;
     if(m_current.type == TT_ID || m_current.type == TT_INTEGER || m_current.type == TT_LITERAL || m_current.type == TT_REAL || m_current.type == TT_PAR1) {
-        procFactor();
+        FactorExpr* fe =  procFactor();
+        return fe;
+
     } else if(m_current.type == TT_NOT) {
         eat(TT_NOT);
-        procFactor();  //precisa ser BOOL
+        FactorExpr* fe =  procFactor();  //precisa ser BOOL
+
+        if(fe->m_type->type == "BOOL") {
+            return fe;
+        } else {
+            std::cout << "Erro na linha: ";
+            std::cout << std::setw(2) << std::setfill('0') << fe->m_line << std::endl;
+            std::cout << "Expressao requer tipo logico"<< std::endl;
+            exit(1);
+        }
+
     } else if (m_current.type == TT_SUB) {
         eat(TT_SUB);
-        procFactor(); //precisa ser numerico
+        FactorExpr* fe =  procFactor(); //precisa ser numerico
+
+        if(fe->m_type->type == "INTEGER" || fe->m_type->type == "FLOAT") {
+            return fe;
+        } else {
+            std::cout << "Erro na linha: ";
+            std::cout << std::setw(2) << std::setfill('0') << fe->m_line << std::endl;
+            std::cout << "Expressao requer tipo numerico"<< std::endl;
+            exit(1);
+        }
     } else {
         showError();
+        return new FactorExpr(m_lex.line());
     }
 }
 
@@ -471,6 +507,7 @@ RelopExpr* SyntaticAnalysis::procRelop() {
         return re;
     } else {
         showError();
+        return new RelopExpr(line, RelopExpr::ERROR);
     }
     
 }
@@ -497,6 +534,7 @@ AddopExpr* SyntaticAnalysis::procAddop() {
         return ae;
     } else {
         showError();
+        return new AddopExpr(m_lex.line(), AddopExpr::ERROR);
     }
 }
 
@@ -522,6 +560,7 @@ MulopExpr* SyntaticAnalysis::procMulop() {
         return me;
     } else {
         showError();
+        return new MulopExpr(m_lex.line(), MulopExpr::ERROR);
     }
 }
 

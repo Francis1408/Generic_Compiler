@@ -10,12 +10,11 @@ class RelopExpr {
 	        GREATER,       // >
 	        LESS_EQUAL,    // <=
 	        GREATER_EQUAL, // >=
+			ERROR,
 		};
 
 		RelopExpr(int line, enum Op op);
 		virtual ~RelopExpr();
-
-		virtual bool expr();
 
         enum Op m_op;
         int m_line;

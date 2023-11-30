@@ -2,5 +2,7 @@ class Teste1
 int a,b,c;
 float result;
 {
-    read (result);
+    if(!a) {
+        read (result);
+    }
 }

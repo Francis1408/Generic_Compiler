@@ -7,6 +7,8 @@ class MulopExpr {
 		    MUL,    // *
 	        DIV,    // /
 	        AND,    // &&
+			ERROR, // error
+			NONE,  // null
 		};
 
 		MulopExpr(int line, enum Op op);

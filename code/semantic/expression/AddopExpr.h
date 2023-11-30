@@ -7,6 +7,7 @@ class AddopExpr {
 		    ADD,    // *
 	        SUB,    // /
 	        OR,    // &&
+			ERROR, // error
 		};
 
 		AddopExpr(int line, enum Op op);
