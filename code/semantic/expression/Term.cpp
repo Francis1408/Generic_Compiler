@@ -1,21 +1,22 @@
-#include "Term_l.h"
+#include "Term.h"
 #include "../type/ExprType.h"
 #include "FactorExpr.h"
+#include "Term_l.h"
 #include "MulopExpr.h"
 #include <iostream>
 #include <iomanip>
 
 
-Term_L_Expr::Term_L_Expr(int line)  { 
+Term_Expr::Term_Expr(int line)  { 
     this->m_line = line;
 
 }
 
-Term_L_Expr::~Term_L_Expr() {
+Term_Expr::~Term_Expr() {
 
 }
 
-ExprType* Term_L_Expr::expr(MulopExpr* me, FactorExpr* fe, Term_L_Expr* tl) {
+ExprType* Term_Expr::expr(FactorExpr* fe, Term_L_Expr* tl) {
 
     if(tl->m_type->type == "NULL") {
         return new ExprType(fe->m_type->type, this->m_line);

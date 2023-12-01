@@ -12,6 +12,7 @@
 #include "../semantic/expression/AddopExpr.h"
 #include "../semantic/expression/FactorExpr.h"
 #include "../semantic/expression/Term_l.h"
+#include "../semantic/expression/Term.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -39,6 +40,7 @@ void SyntaticAnalysis::eat(enum TokenType type) {
               << "), found (\"" << m_current.token << "\", " 
               << tt2str(m_current.type) << ")" << std::endl ;
     */
+    
     if(type ==  m_current.type && type != TT_END_OF_FILE) {
         advance();
     } else if (type == TT_END_OF_FILE) {
@@ -337,7 +339,6 @@ void SyntaticAnalysis::procExpression_l() {
 
 // <simple-expr> ::= <term> <simple-expr’>
 void SyntaticAnalysis::procSimple_expr() {
-    //std::cout << "ENTROU EM <simple-expr>" << std::endl;
     procTerm();
     procSimple_expr_l();
 }
@@ -348,6 +349,7 @@ void SyntaticAnalysis::procSimple_expr_l() {
     if(m_current.type ==  TT_ADD || m_current.type == TT_SUB || m_current.type == TT_OR) {
         procAddop();
         procTerm();
+        std::cout << "RETORNOU DE <Term>" << std::endl;
         procSimple_expr_l();
     } else if(m_current.type == TT_PAR2 || m_current.type == TT_SEMICOLON || m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
        m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
@@ -359,10 +361,16 @@ void SyntaticAnalysis::procSimple_expr_l() {
 }
 
 // <term>  ::= <factor-a> <term’>
-void SyntaticAnalysis::procTerm() {
-    //std::cout << "ENTROU EM <term>" << std::endl;
-    procFactor_a();
-    procTerm_l();
+Term_Expr* SyntaticAnalysis::procTerm() {
+    int line;
+
+    FactorExpr* fe =  procFactor_a();
+    Term_L_Expr* te =  procTerm_l();
+    line = m_lex.line();
+    Term_Expr* tm = new Term_Expr(line);
+    tm->m_type = tm->expr(fe, te);
+
+    return tm;
 }
 
 // <term’> ::= <mulop> <factor-a> <term’> | λ
@@ -377,8 +385,10 @@ Term_L_Expr* SyntaticAnalysis::procTerm_l() {
 
         line = m_lex.line();
         Term_L_Expr* tl2 = new Term_L_Expr(line);
+        tl2->m_op = me;
         tl2->m_type = tl2->expr(me, fe, tl1);
 
+        return tl2;
 
 
     } else if(m_current.type == TT_ADD || m_current.type == TT_SUB || m_current.type == TT_OR || 
@@ -387,7 +397,9 @@ Term_L_Expr* SyntaticAnalysis::procTerm_l() {
               m_current.type == TT_EQUAL) {
         // λ
        Term_L_Expr* tl = new Term_L_Expr(m_lex.line());
-       tl->m_type->type = "NULL";
+       line = m_lex.line();
+       tl->m_type = new ExprType("NULL",line);
+
        return tl;
     } else {
         showError();
@@ -449,6 +461,7 @@ FactorExpr* SyntaticAnalysis::procFactor() {
 
         fe->m_type = fe->expr(tb);
 
+        std::cout << "Retornou " << tb->token << std::endl;
         return fe;
 
     } else if(m_current.type == TT_INTEGER || m_current.type == TT_LITERAL || m_current.type == TT_REAL) {
@@ -456,9 +469,11 @@ FactorExpr* SyntaticAnalysis::procFactor() {
         line = m_lex.line();
         FactorExpr* fe = new FactorExpr(line);
         fe->m_type = new ExprType(et->type, line);
+
         return fe;
 
     } else if(m_current.type == TT_PAR1) {
+        std::cout << "OI " << std::endl;
         eat(TT_PAR1);
         procExpression();
         eat(TT_PAR2);
@@ -540,7 +555,7 @@ AddopExpr* SyntaticAnalysis::procAddop() {
 
 // <mulop> ::= “*” | “/” | “&&”
 MulopExpr* SyntaticAnalysis::procMulop() {
-    //std::cout << "ENTROU EM <mulop>" << std::endl;
+   //std::cout << "ENTROU EM <mulop>" << std::endl;
     int line;
 
     if(m_current.type == TT_MUL) {

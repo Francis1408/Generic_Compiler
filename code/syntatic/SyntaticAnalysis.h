@@ -11,6 +11,7 @@ class MulopExpr;
 class AddopExpr;
 class FactorExpr;
 class Term_L_Expr;
+class Term_Expr;
 class SyntaticAnalysis {
     public:
         SyntaticAnalysis(LexicalAnalysis& lex);
@@ -47,7 +48,7 @@ class SyntaticAnalysis {
         void procExpression_l();
         void procSimple_expr();
         void procSimple_expr_l();
-        void procTerm();
+        Term_Expr* procTerm();
         Term_L_Expr* procTerm_l();
         FactorExpr* procFactor_a();
         FactorExpr* procFactor();

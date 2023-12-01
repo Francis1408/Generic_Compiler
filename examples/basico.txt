@@ -2,7 +2,5 @@ class Teste1
 int a,b,c;
 float result;
 {
-    if(!a) {
-        read (result);
-    }
+    a = b/c;
 }

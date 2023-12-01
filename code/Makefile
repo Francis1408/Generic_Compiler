@@ -11,8 +11,9 @@ OBJS=compiler.o  lexical/TableInfo.o lexical/SymbolTable.o lexical/LexicalAnalys
 	 semantic/expression/AddopExpr.o \
 	 semantic/expression/MulopExpr.o  \
 	 semantic/expression/RelopExpr.o \
-	 semantic/expression/FactorExpr.o
-	 
+	 semantic/expression/FactorExpr.o \
+	 semantic/expression/Term_l.o \
+	 semantic/expression/Term.o
 
 all: $(TARGET)
 
@@ -40,13 +41,17 @@ semantic/declaration/Identifier.o: semantic/declaration/Identifier.h
 
 semantic/command/ReadCommand.o: semantic/type/ExprType.h semantic/command/Command.h lexical/TableInfo.h
 
-semantic/expression/FactorExpr.o: semantic/type/ExprType.h lexical/TableInfo.h
+semantic/expression/FactorExpr.o: semantic/expression/FactorExpr.h semantic/type/ExprType.h lexical/TableInfo.h
 
-semantic/expression/RelopExpr.o: 
+semantic/expression/RelopExpr.o: semantic/expression/RelopExpr.h
 
-semantic/expression/AddopExpr.o:
+semantic/expression/AddopExpr.o: semantic/expression/AddopExpr.h
 
-semantic/expression/MulopExpr.o:
+semantic/expression/MulopExpr.o: semantic/expression/MulopExpr.h
+
+semantic/expression/Term_l.o: semantic/expression/Term_l.h semantic/type/ExprType.h semantic/expression/MulopExpr.h semantic/expression/FactorExpr.h
+
+semantic/expression/Term.o: semantic/expression/Term.h semantic/type/ExprType.h semantic/expression/MulopExpr.h semantic/expression/FactorExpr.h
 
 
 $(TARGET): $(OBJS)
