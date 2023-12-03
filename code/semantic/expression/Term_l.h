@@ -11,7 +11,7 @@ class Term_L_Expr {
 
 		Term_L_Expr(int line);
 		virtual ~Term_L_Expr();
-		ExprType* expr( MulopExpr* me, FactorExpr* fe, Term_L_Expr* tl);
+		ExprType* expr( FactorExpr* fe, Term_L_Expr* tl);
 
         int m_line;
 		ExprType* m_type;

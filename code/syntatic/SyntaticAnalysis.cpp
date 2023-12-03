@@ -13,6 +13,7 @@
 #include "../semantic/expression/FactorExpr.h"
 #include "../semantic/expression/Term_l.h"
 #include "../semantic/expression/Term.h"
+#include "../semantic/expression/Simple_Expr_l.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -344,19 +345,34 @@ void SyntaticAnalysis::procSimple_expr() {
 }
 
 // <simple-expr’> ::= <addop> <term> <simple-expr’> | λ
-void SyntaticAnalysis::procSimple_expr_l() {
+Simple_Expr_L* SyntaticAnalysis::procSimple_expr_l() {
     //std::cout << "ENTROU EM <simple-expr'>" << std::endl;
+    int line;
+
     if(m_current.type ==  TT_ADD || m_current.type == TT_SUB || m_current.type == TT_OR) {
-        procAddop();
-        procTerm();
-        std::cout << "RETORNOU DE <Term>" << std::endl;
-        procSimple_expr_l();
+        AddopExpr* ae = procAddop();
+        Term_Expr* tm =  procTerm();
+        Simple_Expr_L* sel1 = procSimple_expr_l();
+
+        line = m_lex.line();
+        Simple_Expr_L* sel2 = new Simple_Expr_L(line);
+        sel2->m_op = ae;
+        sel2->m_type = sel2->expr(tm, sel1);
+
+        return sel2;
+
     } else if(m_current.type == TT_PAR2 || m_current.type == TT_SEMICOLON || m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
        m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
        m_current.type == TT_EQUAL) {
         // λ
+
+       Simple_Expr_L* sel = new Simple_Expr_L(m_lex.line());
+       sel->m_type = new ExprType("NULL",m_lex.line());
+
+       return sel;
     } else {
         showError();
+        return new Simple_Expr_L(m_lex.line());
     }
 }
 
@@ -386,7 +402,7 @@ Term_L_Expr* SyntaticAnalysis::procTerm_l() {
         line = m_lex.line();
         Term_L_Expr* tl2 = new Term_L_Expr(line);
         tl2->m_op = me;
-        tl2->m_type = tl2->expr(me, fe, tl1);
+        tl2->m_type = tl2->expr(fe, tl1);
 
         return tl2;
 
