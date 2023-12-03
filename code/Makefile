@@ -15,7 +15,9 @@ OBJS=compiler.o  lexical/TableInfo.o lexical/SymbolTable.o lexical/LexicalAnalys
 	 semantic/expression/Term_l.o \
 	 semantic/expression/Term.o \
 	 semantic/expression/Simple_Expr_l.o \
-	 semantic/expression/Simple_Expr.o
+	 semantic/expression/Simple_Expr.o \
+	 semantic/expression/Expression_l.o \
+	 semantic/expression/Expression.o
 
 all: $(TARGET)
 
@@ -59,7 +61,9 @@ semantic/expression/Simple_Expr_l.o: semantic/expression/Simple_Expr_l.h semanti
 
 semantic/expression/Simple_Expr.o: semantic/expression/Simple_Expr.h semantic/type/ExprType.h semantic/expression/AddopExpr.h semantic/expression/Term.h
 
+semantic/expression/Expression_l.o: semantic/expression/Expression_l.h semantic/expression/RelopExpr.h semantic/type/ExprType.h
 
+semantic/expression/Expression.o: semantic/expression/Expression.h semantic/expression/Expression_l.h semantic/expression/Simple_Expr.h semantic/type/ExprType.h
 
 
 $(TARGET): $(OBJS)

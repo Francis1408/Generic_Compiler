@@ -14,6 +14,9 @@
 #include "../semantic/expression/Term_l.h"
 #include "../semantic/expression/Term.h"
 #include "../semantic/expression/Simple_Expr_l.h"
+#include "../semantic/expression/Simple_Expr.h"
+#include "../semantic/expression/Expression_l.h"
+#include "../semantic/expression/Expression.h"
 
 #include "SyntaticAnalysis.h"
 
@@ -254,9 +257,9 @@ void SyntaticAnalysis::procIf_stmt_l() {
 } 
 
 // <condition> ::= <expression>
-void SyntaticAnalysis::procCondition() {
+Expression* SyntaticAnalysis::procCondition() {
     //std::cout << "ENTROU EM <condition>" << std::endl;
-    procExpression();
+    return procExpression();
 }
 
 // <do-stmt> ::= do “{” <stmt-list> “}” <do-suffix>
@@ -309,39 +312,71 @@ void SyntaticAnalysis::procWrite_stmt() {
 }
 
 // <writable> ::= <simple-expr>
-void SyntaticAnalysis::procWritable() {
+Simple_Expr* SyntaticAnalysis::procWritable() {
     //std::cout << "ENTROU EM <writable>" << std::endl;
-    procSimple_expr();
+    return procSimple_expr();
 }
 
 // <expression>	::= <simple-expr> <expression’>
-void SyntaticAnalysis::procExpression() {
+Expression* SyntaticAnalysis::procExpression() {
     //std::cout << "ENTROU EM <expression>" << std::endl;
-    procSimple_expr();
-    procExpression_l();
+    int line;
+
+    Simple_Expr* se =  procSimple_expr();
+    Expression_L* exl = procExpression_l();
+    
+    line = m_lex.line();
+    Expression* exp = new Expression(line);
+    exp->m_type = exp->expr(exl, se);
+
+    return exp;
+    
 }
 
 // <expression’>	::= λ | <relop> <simple-expr>
-void SyntaticAnalysis::procExpression_l() {
+Expression_L* SyntaticAnalysis::procExpression_l() {
     //std::cout << "ENTROU EM <expression'>" << std::endl;
+    int line;
+
     if(m_current.type == TT_NOT_EQUAL || m_current.type == TT_GREATER || 
-       m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
-       m_current.type == TT_EQUAL) {
-        procRelop();
-        procSimple_expr();
+        m_current.type == TT_GREATER_EQUAL || m_current.type == TT_LOWER || m_current.type == TT_LESS_EQUAL || 
+        m_current.type == TT_EQUAL) {
+        RelopExpr* re = procRelop();
+        Simple_Expr* se = procSimple_expr();
+        line = m_lex.line();
+        Expression_L* exl = new Expression_L(line);
+        exl->m_op = re;
+        exl->m_type = se->m_type;
+
+        return exl;
+
     }
     else if(m_current.type == TT_PAR2) {
         // λ
+        Expression_L* exl = new Expression_L(m_lex.line());
+        exl->m_type = new ExprType("NULL",m_lex.line()); 
+
+        return exl;
+
     } else {
         showError();
+        return new Expression_L(m_lex.line());
     }
 }
 
 
 // <simple-expr> ::= <term> <simple-expr’>
-void SyntaticAnalysis::procSimple_expr() {
-    procTerm();
-    procSimple_expr_l();
+Simple_Expr* SyntaticAnalysis::procSimple_expr() {
+    int line;
+
+    Term_Expr* tm = procTerm();
+    Simple_Expr_L* sel = procSimple_expr_l();
+    line = m_lex.line();
+    Simple_Expr* se = new Simple_Expr(line);
+    se->m_type = se->expr(tm, sel);
+
+    return se;
+
 }
 
 // <simple-expr’> ::= <addop> <term> <simple-expr’> | λ
@@ -489,10 +524,19 @@ FactorExpr* SyntaticAnalysis::procFactor() {
         return fe;
 
     } else if(m_current.type == TT_PAR1) {
-        std::cout << "OI " << std::endl;
         eat(TT_PAR1);
-        procExpression();
+        Expression* exp = procExpression();
         eat(TT_PAR2);
+
+        line = m_lex.line();
+        FactorExpr* fe = new FactorExpr(line);
+        fe->m_type = exp->m_type;
+
+        return fe;
+        
+    } else {
+        showError();
+        return new FactorExpr(m_lex.line());
     }
 }
 
