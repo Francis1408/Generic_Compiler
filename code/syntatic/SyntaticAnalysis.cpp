@@ -5,6 +5,12 @@
 #include "../semantic/type/ExprType.h"
 #include "../semantic/command/ReadCommand.h"
 #include "../semantic/command/WriteCommand.h"
+#include "../semantic/command/AssignCommand.h"
+#include "../semantic/command/IfCommand.h"
+#include "../semantic/command/DoSuffixCommand.h"
+#include "../semantic/command/DoCommand.h"
+#include "../semantic/command/StatementList.h"
+#include "../semantic/command/Statement.h"
 #include "../semantic/declaration/IdentList.h"
 #include "../semantic/declaration/Identifier.h"
 #include "../semantic/expression/RelopExpr.h"
@@ -32,7 +38,6 @@ SyntaticAnalysis::~SyntaticAnalysis() {
 void SyntaticAnalysis::start() {
     procProgram();
     eat(TT_END_OF_FILE);
-    m_lex.showTable();
 }
 
 void SyntaticAnalysis::advance() {
@@ -107,11 +112,10 @@ void SyntaticAnalysis::procDecl() {
     for(std::list<Identifier*>::iterator it = iList->idList.begin(),
         ed = iList->idList.end(); it != ed; it++) {
             Identifier* i = *it;
-            int line = i->m_line;
             try{
                 if(m_lex.addToken(i->id, eType->type));
                 else {
-                    throw(line);
+                    throw(m_lex.line());
                 }
                 //std::cout << "Identifier(" << i->id << "): ADICIONADO "<< std::endl;
             }
@@ -190,69 +194,129 @@ void SyntaticAnalysis::procBody() {
 }
 
 // <stmt-list> ::=  <stmt> “;” {<stmt> “;”}
-void SyntaticAnalysis::procStmt_list() {
+StatementList* SyntaticAnalysis::procStmt_list() {
     //std::cout << "ENTROU EM <stmt-list>" << std::endl;
-    procStmt();
+    int line = m_lex.line();
+    Statement* stmt =  procStmt();
+    StatementList* stmtList = new StatementList(line);
+    stmtList->addStmt(stmt); 
+
     eat(TT_SEMICOLON);
     while(m_current.type == TT_ID || m_current.type == TT_IF || m_current.type == TT_DO || m_current.type == TT_READ || m_current.type == TT_WRITE) {
-        procStmt();
+        Statement* stmt = procStmt();
+        stmtList->addStmt(stmt);
         eat(TT_SEMICOLON);
     }
+
+    stmtList->m_type = stmtList->getType();
+    return stmtList;
 
 }
 
 //<stmt> ::= <assign-stmt> | <if-stmt> | <do-stmt> | <read-stmt> | <write-stmt>
-void SyntaticAnalysis::procStmt() {
+Statement* SyntaticAnalysis::procStmt() {
     //std::cout << "ENTROU EM <stmt>" << std::endl;
     if(m_current.type == TT_ID) {
-        procAssign_stmt();
+        int line = m_lex.line();
+        AssignCommand* asc = procAssign_stmt();
+        Statement* stmt = new Statement(line);
+        stmt->m_type = asc->m_type;
+        return stmt;
+
     } else if(m_current.type == TT_IF) {
-        procIf_stmt();
+        int line = m_lex.line();
+        IfCommand* ifc = procIf_stmt();
+        Statement* stmt = new Statement(line);
+        stmt->m_type = ifc->m_type;
+        return stmt;
+
     } else if (m_current.type == TT_DO) {
-        procDo_stmt();
-    } else if (m_current.type == TT_READ)  {
-        procRead_stmt();
+        int line = m_lex.line();
+        DoCommand* dc = procDo_stmt();
+        Statement* stmt = new Statement(line);
+        stmt->m_type = dc->m_type;
+        return stmt;
+
+    } else if (m_current.type == TT_READ) {
+        int line = m_lex.line();
+        ReadCommand* rc = procRead_stmt();
+        Statement* stmt = new Statement(line);
+        stmt->m_type = rc->m_type;
+        return stmt;
+
     } else if (m_current.type == TT_WRITE) {
-        procWrite_stmt();
+        int line = m_lex.line();
+        WriteCommand* wc =  procWrite_stmt();
+        Statement* stmt = new Statement(line);
+        stmt->m_type = wc->m_type;
+        return stmt;
+
     } else {
         showError();
+        return new Statement(m_lex.line());
     }
 
 }
 
 // <assign-stmt> ::= identifier “=” <simple_expr>
-void SyntaticAnalysis::procAssign_stmt() {
+AssignCommand* SyntaticAnalysis::procAssign_stmt() {
     //std::cout << "ENTROU EM <assign-stmt>" << std::endl;
+
+    std::string tmp = m_current.token;
     eat(TT_ID);
+    int line = m_lex.line();
+    AssignCommand* ac = new AssignCommand(line);
+    TableInfo* tb = m_lex.findToken(tmp);
     eat(TT_ASSIGN);
-    procSimple_expr();
+    Simple_Expr* se = procSimple_expr();
+    ac->m_type = ac->rule(se, tb, tmp);
+
+    return ac;
 }
 
 // <if-stmt> ::= if “(” <condition> “)” “{” <stmt-list> “}” <if-stmt’>
-void SyntaticAnalysis::procIf_stmt() {
+IfCommand* SyntaticAnalysis::procIf_stmt() {
     //std::cout << "ENTROU EM <if-stmt>" << std::endl;
     eat(TT_IF);
     eat(TT_PAR1);
-    procCondition();
+    Expression* ex = procCondition();
     eat(TT_PAR2);
     eat(TT_CHAV1);
-    procStmt_list();
+    StatementList* stmtList =  procStmt_list();
     eat(TT_CHAV2);
-    procIf_stmt_l();
+    IfCommand* ifcmdL = procIf_stmt_l();
+
+    int line = m_lex.line();
+    IfCommand* ifcmd = new IfCommand(line);
+    ifcmd->m_type = ifcmd->rule(ex, stmtList);
+
+    return ifcmd;
+
 }
 
 // <if-stmt’> ::= λ | else “{” <stmt-list> “}”
-void SyntaticAnalysis::procIf_stmt_l() {
+IfCommand* SyntaticAnalysis::procIf_stmt_l() {
     //std::cout << "ENTROU EM <if-stmt'>" << std::endl;
     if(m_current.type == TT_ELSE) {
+        int line = m_lex.line();
+        IfCommand* ifcmd = new IfCommand(line);
         advance();
         eat(TT_CHAV1);
-        procStmt_list();
+        StatementList* stmtList = procStmt_list();
         eat(TT_CHAV2);
+
+        ifcmd->m_type = stmtList->m_type;
+        return ifcmd;
     } else if(m_current.type == TT_SEMICOLON ) {
         // λ
+        int line = m_lex.line();
+        IfCommand* ifcmd = new IfCommand(line);
+        ifcmd->m_type = new ExprType("NULL", line);
+        return ifcmd;
+
     } else {
         showError();
+        return new IfCommand(m_lex.line());
     }
 } 
 
@@ -263,23 +327,33 @@ Expression* SyntaticAnalysis::procCondition() {
 }
 
 // <do-stmt> ::= do “{” <stmt-list> “}” <do-suffix>
-void SyntaticAnalysis::procDo_stmt() {
+DoCommand* SyntaticAnalysis::procDo_stmt() {
     //std::cout << "ENTROU EM <do-stmt>" << std::endl;
+    int line = m_lex.line();
+    DoCommand* dc = new DoCommand(line);
     eat(TT_DO);
     eat(TT_CHAV1);
-    procStmt_list();
+    StatementList* stmtList =  procStmt_list();
     eat(TT_CHAV2);
-    procDo_suffix();
-
+    DoSuffixCommand* dsc = procDo_suffix();
+    
+    dc->m_type = stmtList->m_type;
+    return dc;
 }
 
 // <do-suffix> ::= while “(” <condition> “)”
-void SyntaticAnalysis::procDo_suffix() {
+DoSuffixCommand* SyntaticAnalysis::procDo_suffix() {
     //std::cout << "ENTROU EM <do-suffix>" << std::endl;
     eat(TT_WHILE);
     eat(TT_PAR1);
-    procCondition();
+    Expression* exp =  procCondition();
+    int line = m_lex.line();
     eat(TT_PAR2);
+
+    DoSuffixCommand* dsc = new DoSuffixCommand(line);
+    dsc->m_type = dsc->rule(exp);
+
+    return dsc;
 }
 
 // <read-stmt> ::= read “(” identifier “)”
@@ -296,19 +370,26 @@ ReadCommand* SyntaticAnalysis::procRead_stmt() {
     TableInfo* tb = m_lex.findToken(tmp);
     eat(TT_PAR2);
 
-    rc->m_type = rc->rule(tb);
+    rc->m_type = rc->rule(tb, tmp);
 
     return rc;
 
 }
 
 // <write-stmt> ::= write “(” <writable> “)”
-void SyntaticAnalysis::procWrite_stmt() {
+WriteCommand* SyntaticAnalysis::procWrite_stmt() {
     //std::cout << "ENTROU EM <write-stmt>" << std::endl;
+    int line;
+
     eat(TT_WRITE);
     eat(TT_PAR1);
-    procWritable();
+    Simple_Expr* se = procWritable();
     eat(TT_PAR2);
+    line = m_lex.line();
+    WriteCommand* wc = new WriteCommand(line);
+    wc->m_type = wc->rule(se);
+
+    return wc;
 }
 
 // <writable> ::= <simple-expr>
@@ -510,9 +591,8 @@ FactorExpr* SyntaticAnalysis::procFactor() {
         FactorExpr* fe = new FactorExpr(line);
         TableInfo* tb = m_lex.findToken(tmp);
 
-        fe->m_type = fe->expr(tb);
+        fe->m_type = fe->expr(tb,tmp);
 
-        std::cout << "Retornou " << tb->token << std::endl;
         return fe;
 
     } else if(m_current.type == TT_INTEGER || m_current.type == TT_LITERAL || m_current.type == TT_REAL) {

@@ -2,5 +2,5 @@ class Teste1
 int a,b,c;
 float result;
 {
-    a = b/c;
+    a = b;
 }

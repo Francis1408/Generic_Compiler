@@ -4,12 +4,14 @@
 class ExprType;
 class TableInfo;
 
+#include <string>
+
 class FactorExpr {
     public:
         FactorExpr(int line);
         virtual ~FactorExpr();
 
-        ExprType* expr(TableInfo* tb);
+        ExprType* expr(TableInfo* tb, std::string id);
 
         int m_line;
         ExprType* m_type;

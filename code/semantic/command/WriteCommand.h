@@ -4,17 +4,17 @@
 #include "Command.h"
 
 class ExprType;
+class Simple_Expr;
 
 class WriteCommand : public Command {
     public:
-        WriteCommand(int line,  ExprType* type);
+        WriteCommand(int line);
         virtual ~WriteCommand();
 
-        virtual bool rule(ExprType* type);
+        ExprType* rule(Simple_Expr* se); 
 
         ExprType* m_type;
         
-    private:
 };
 
 #endif

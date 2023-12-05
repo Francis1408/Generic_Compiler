@@ -1,6 +1,7 @@
 #include "FactorExpr.h"
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 #include "../../lexical/TableInfo.h"
 #include "../type/ExprType.h"
@@ -13,12 +14,12 @@ FactorExpr::~FactorExpr() {
     delete m_type;
 }
      
-ExprType* FactorExpr::expr(TableInfo* tb) {
+ExprType* FactorExpr::expr(TableInfo* tb, std::string id) {
 
     if(tb->type == "ERROR") {
         std::cout << "Erro na linha: ";
-        std::cout << std::setw(2) << std::setfill('0') << this->m_line << std::endl;
-        std::cout << "Identificador [" << tb->token << "] nao declarado"<< std::endl;
+        std::cout << std::setw(2) << std::setfill('0') << this->m_line+1 << std::endl;
+        std::cout << "Identificador [" << id << "] nao declarado"<< std::endl;
 
         exit(1);
     } else {

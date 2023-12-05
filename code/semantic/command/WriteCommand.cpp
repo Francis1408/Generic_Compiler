@@ -1,7 +1,9 @@
 #include "WriteCommand.h"
+#include "../type/ExprType.h"
+#include "../expression/Simple_Expr.h"
 
-WriteCommand::WriteCommand(int line, ExprType* type)
-    :Command(line), m_type(type) { 
+WriteCommand::WriteCommand(int line)
+    :Command(line) { 
 
 }
 
@@ -9,6 +11,11 @@ WriteCommand::~WriteCommand() {
     delete m_type;
 }
 
-bool WriteCommand::rule(ExprType* type) {
-
-}       
+ExprType* WriteCommand::rule(Simple_Expr* se) {
+    if(se->m_type->type != "ERROR") {
+        return new ExprType("NULL", this->m_line);
+    }
+    else {
+        return new ExprType("ERROR", this->m_line);
+    }
+}

@@ -33,7 +33,15 @@ ExprType* Simple_Expr_L::expr(Term_Expr* tm, Simple_Expr_L* sel) {
             std::cout << "Operacao aritimetica nao suporta tipo logico" <<std::endl;
             exit(1);
             return new ExprType("ERROR", this->m_line);
-        }
+        } 
+        else if(sel->m_type->type == "STRING" && sel->m_op->m_op != AddopExpr::ADD) {
+        std::cout << "Erro na linha: ";
+        std::cout << std::setw(2) << std::setfill('0') << this->m_line << std::endl;
+        std::cout << "Operacao nao suporta tipo String " <<std::endl;
+        exit(1);
+        return new ExprType("ERROR", this->m_line);
+        } 
+
         return new ExprType(tm->m_type->type, this->m_line);
     }
 }

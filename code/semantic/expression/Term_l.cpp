@@ -25,8 +25,15 @@ ExprType* Term_L_Expr::expr(FactorExpr* fe, Term_L_Expr* tl) {
         std::cout << "Operacao de tipo "<< tl->m_type->type << " e " << fe->m_type->type << " nao compativeis" <<std::endl;
         exit(1);
         return new ExprType("ERROR", this->m_line);
-
-    } else {
+    
+    } else if(tl->m_type->type == "STRING") {
+        std::cout << "Erro na linha: ";
+        std::cout << std::setw(2) << std::setfill('0') << this->m_line << std::endl;
+        std::cout << "Operacao nao suporta tipo String " <<std::endl;
+        exit(1);
+        return new ExprType("ERROR", this->m_line);
+    } 
+    else {
         if (tl->m_type->type == "INTEGER" && tl->m_op->m_op == MulopExpr::DIV) {
             return new ExprType("FLOAT", this->m_line);
         }   

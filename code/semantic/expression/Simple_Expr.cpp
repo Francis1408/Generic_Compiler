@@ -35,6 +35,13 @@ ExprType* Simple_Expr::expr(Term_Expr* te, Simple_Expr_L* sel) {
             exit(1);
             return new ExprType("ERROR", this->m_line);
         }
+        else if(sel->m_type->type == "STRING" && sel->m_op->m_op != AddopExpr::ADD) {
+        std::cout << "Erro na linha: ";
+        std::cout << std::setw(2) << std::setfill('0') << this->m_line << std::endl;
+        std::cout << "Operacao nao suporta tipo String " <<std::endl;
+        exit(1);
+        return new ExprType("ERROR", this->m_line);
+        }
         return new ExprType(te->m_type->type, this->m_line);
     }
 }
