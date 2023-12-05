@@ -53,7 +53,7 @@ void SyntaticAnalysis::eat(enum TokenType type) {
     if(type ==  m_current.type && type != TT_END_OF_FILE) {
         advance();
     } else if (type == TT_END_OF_FILE) {
-        std::cout << "Análise sintática feita com sucesso!" << std::endl;
+        std::cout << "Análise sintática e semântica feitas com sucesso!" << std::endl;
         advance();
     } else {
         showError();
