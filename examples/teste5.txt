@@ -1,5 +1,5 @@
 class MinhaClasse
-    float a, b, c;
+    float a, b, c, maior;
 {
 write("Digite um número");
 read(a);
@@ -7,7 +7,7 @@ write("Digite outro número: ");
 read(b);
 write("Digite mais um número: ");
 read(c);
-maior = 0;
+maior = 0.0;
 if ( (a>b) && (a>c) ) {
     maior = a;
 } else {
