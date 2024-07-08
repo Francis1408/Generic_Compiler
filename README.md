@@ -16,6 +16,8 @@ Development in C++ of a complete compiler for a generic programming language.
 ### 2.1. Lexical Analysis
 The compiler reads each characther from the code file and groups them in sequences called **Lexems**. These structures contain **token types** which are identified by the following **DFA (Deterministic finite automaton):**
 
+![datatext](https://github.com/Francis1408/Generic_Compiler/blob/main/img/Screenshot%20from%202024-07-08%2017-47-30.png)
+
 ### 2.2. Syntatic Analysis
 The compiler "eats" the **Lexems** and assembles a **derivation tree**. In order to do it, the compiler checks the following **LL(1) Gramatic**
 
